@@ -123,7 +123,7 @@ class RBTree(BST):
     
     def fix_insert(self, node):
         
-        while node.parent and node.parent.parent == RED:
+        while node.parent and node.parent.color == RED:
             uncle = self._get_uncle(node)
             
             
@@ -147,7 +147,7 @@ class RBTree(BST):
                     #Caso 3 - Nodos alineados, rotar y recolorear
                     
                     node.parent.color = BLACK
-                    node.parent.paren.color = RED
+                    node.parent.parent.color = RED
                     self.rotate_right(node.parent.parent)  # Rotacion por el abuelo
                     
             #Lado derecho (Espejo)
@@ -155,7 +155,7 @@ class RBTree(BST):
                 
                 #Caso 1 - tio rojo 
                 if uncle.color == RED:
-                    node.parent = BLACK
+                    node.parent.color = BLACK
                     uncle.color = BLACK
                     node.parent.parent.color = RED
                     node = node.parent.parent  # Sube al abuelo
@@ -205,7 +205,7 @@ class RBTree(BST):
         if self._is_nil(node) or node is None:
             return    #La clave no existe
         
-        self._delete_node(self, node)
+        self._delete_node(node)
     
     def _delete_node(self, node):
         
