@@ -83,7 +83,7 @@ class BST(ABC):
             None: Si la clave no existe en el arbol
         """
         
-        while node is not None:  #Si node es None, el puntero salio del arbol sin encontrar nada
+        while node is not None and node.key is not None:  #Si node es None, el puntero salio del arbol sin encontrar nada   /////////////// Frena en NIL
             
             if key == node.key:
                 return node   # Si encontro la key, entonces retorna el nodo
@@ -115,7 +115,7 @@ class BST(ABC):
             node (Node): Es un atributo propio de la recursion
             result (list): Una lista que sirve como acumuladora de los nodos ordenados ascendentemente
         """
-        if node is not None:
+        if node is not None and node.key is not None:   #IGNORA NIL
             self._inorder(
                 node.left,
                 result
