@@ -243,4 +243,70 @@ class RBTree(BST):
         if original_color == BLACK:
             self.fix_delete(fix_node)  #Solo ajustar si se elimino un nodo negro
     
+    def fix_delete(self, node):
+        
+        while node != self.root and node.color == BLACK:
             
+            #Por la izquierda
+            if node == node.parent.left:
+                sibling = node.parent.right
+                
+                #Caso 1 Hermano rojo
+                if sibling.color == RED:
+                    sibling.color = BLACK
+                    node.parent.color = RED
+                    self.rotate_left(node.parent)
+                    sibling = node.parent.right
+                
+                #Caso 2 hermano negro, sobrinos negros
+                if sibling.left.color == BLACK and sibling.right.color == BLACK:
+                    sibling.color = RED
+                    node = node.parent   #SUBE EL PROBLEMA
+                
+                else:
+                    if sibling.right.color ==BLACK:
+                        sibling.left.color = BLACK
+                        sibling.color = RED
+                        self.rotate_right(sibling)
+                        sibling = node.parent.right
+                    
+                    #CASO 4 hijo lejano rojo
+                    sibling.color = node.parent.color
+                    node.parent.color = BLACK
+                    sibling.right.color = BLACK
+                    self.rotate_left(node.parent)
+                    node = self.root  #RESUELTO
+                    
+            
+            #POR LA DERECHA (ESPEJO)
+            else:
+                sibling = node.parent.left
+                
+                #CASO 1 hermano rojo
+                if sibling.color == RED:
+                    sibling.color = BLACK
+                    node.parent.color = RED
+                    self.rotate_right(node.parent)
+                    sibling = node.parent.left
+                
+                #CASO 2 Hermano negro y sobrinos negros
+                if sibling.right.color == BLACK and sibling.left.color == BLACK:
+                    sibling.color = RED
+                    node = node.parent   #Sube el problema
+                
+                else:
+                    #CASO 3 hijo lejano negro, hijo cercano rojo 
+                    if sibling.left.color == BLACK:
+                        sibling.right.color = BLACK
+                        sibling.color = RED  
+                        self.rotate_left(sibling)
+                        sibling = node.parent.left
+                    
+                    #CASO 4 hijo lejano rojo
+                    sibling.color = node.parent.color
+                    node.parent.color = BLACK
+                    sibling.left.color = BLACK
+                    self.rotate_right(node.parent)
+                    node = self.root  #RESUELTO
+                    
+        node.color = BLACK   #  EL NODO FINAL SIEMPRE QUEDA NEGRO
