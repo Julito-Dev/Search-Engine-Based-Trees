@@ -173,5 +173,74 @@ class RBTree(BST):
                     self.rotate_left(node.parent.parent) #Rotacion por el abuelo
         
         self.root.color = BLACK   #Raiz siempre negra                
+    
+    def _transplant(self, u, v):
+        if u.parent is None:
+            self.root = v
         
+        elif u == u.parent.left:
+            u.parent.left = v
+        else:
+            u.parent.right = v
+        
+        v.parent = u.parent
+    
+    def _get_min_node(self, node):
+        """Retorna el nodo con la clave minima del subárbol.
+
+        Args:
+            node (RBNode): Raiz del subárbol
+
+        Returns:
+            RBNode: El nodo con la clave minima
+        """
+        while not self._is_nil(node.left):
+            node = node.left
+        return node
+    
+    def delete(self, key):
+        
+        node = self._search_iterative(self.root, key)
+        
+        if self._is_nil(node) or node is None:
+            return    #La clave no existe
+        
+        self._delete_node(self, node)
+    
+    def _delete_node(self, node):
+        
+        original_color = node.color
+        fix_node = None
+        
+        #CASO 1 sin hijo izquierdo
+        if self._is_nil(node.left):
+            fix_node = node.right
+            self._transplant(node, node.right)
+        
+        #CASO 2 sin hijo derecho
+        elif self._is_nil(node.right):
+            fix_node = node.left
+            self._transplant(node, node.left)
+        
+        #CASO 3 dos hijos
+        else:
+            sucesor = self._get_min_node(node.right)
+            original_color = sucesor.color
+            fix_node = sucesor.right
+            
+            if sucesor.parent == node:
+                fix_node.parent = sucesor
+            else:
+                self._transplant(sucesor, sucesor.right)
+                sucesor.right = node.right
+                sucesor.right.parent = sucesor
+            
+            self._transplant(node, sucesor)
+            sucesor.left = node.left
+            sucesor.left.parent = sucesor
+            sucesor.color = node.color
+        
+        if original_color == BLACK:
+            self.fix_delete(fix_node)  #Solo ajustar si se elimino un nodo negro
+    
             
