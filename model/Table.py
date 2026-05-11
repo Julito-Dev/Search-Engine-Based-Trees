@@ -56,10 +56,10 @@ class Table:
         """Recursively computes the height of a subtree."""
         if node is None:
             return 0
-        if hasattr(node, "height"):          # AVLNode stores height directly
+        if hasattr(node, "height"):          # AVLNode almacena la altura
             return node.height
         if hasattr(node, "key") and node.key is None:
-            return 0                          # NIL sentinel of RBTree
+            return 0                          
         return 1 + max(
             self._compute_height(node.left),
             self._compute_height(node.right),
@@ -83,7 +83,7 @@ class Table:
             return "NIL"
         return str(node.key)
  
-   # ── Row extraction ───────────────────────────────────────────────────────
+   # ── Extraccion de filas ───────────────────────────────────────────────────────
  
     def rows(self):
         """Extracts all rows from the tree in ascending key order.
@@ -94,7 +94,7 @@ class Table:
                         AVL adds    : 'height', 'balance'.
                         RB  adds    : 'color',  'parent'.
         """
-        inorder = self._tree.inorder()   # [(key, data), …] sorted ascending
+        inorder = self._tree.inorder()   # [(key, data), …] ordenando ascendentemente
  
         result = []
         for pos, (key, data) in enumerate(inorder, start=1):
@@ -127,4 +127,46 @@ class Table:
         return result
  
  
+    # ── Summary ──────────────────────────────────────────────────────────────
+ 
+    def summary(self):
+        """Returns a dictionary with the tree's global metrics.
+ 
+        Returns:
+            dict: {'tree_type', 'node_count', 'height', 'min_key', 'max_key'}
+        """
+        return {
+            "tree_type":  self.tree_type,
+            "node_count": self.node_count,
+            "height":     self.height,
+            "min_key":    self.min_key,
+            "max_key":    self.max_key,
+        }
+ 
+    # ── Search ───────────────────────────────────────────────────────────────
+ 
+    def find(self, key):
+        """Finds a node by key and returns its row as a dictionary.
+ 
+        Args:
+            key (Any): The key to search for.
+ 
+        Returns:
+            dict | None: The node's row, or None if not found.
+        """
+        for row in self.rows():
+            if row["key"] == key:
+                return row
+        return None
+ 
+    # ── Dunder ───────────────────────────────────────────────────────────────
+ 
+    def __repr__(self):
+        s = self.summary()
+        return (
+            f"Table(tree_type={s['tree_type']!r}, "
+            f"node_count={s['node_count']}, "
+            f"height={s['height']})"
+        )
+   
   
