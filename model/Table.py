@@ -33,3 +33,27 @@ class Table:
             key (Any): ID del nodo a eliminar
         """
         self._tree.delete(key)
+        
+    def update_row(self, key, data):
+        """Actualiza los datos de una fila.
+            Si la clave no existe, la inserta.
+
+        Args:
+            key (Any): La clave primaria del nodo a actualizar
+            data (dict): Nuevos datos
+        """
+        self._tree.insert(key, data)
+    
+    def find(self, key):
+        """Busca una fila por su ID
+
+        Args:
+            key (Any): La clave primaria ID
+        """
+        
+        nodo = self._tree.search(key)
+        if nodo is None:
+            return None
+        return {"key": nodo.key, "data": nodo.data}
+
+        
