@@ -128,14 +128,14 @@ class Database:
             "database": self.name,
             "tables": len(self._tables),
             "table_info": {
-                name: table.summary
-                for name, table in self._tables
+                name: table.summary()
+                for name, table in self._tables.items()
             }
         }
         
     def __repr__(self):
         return(
-            f"Database(name={self.name}!r), "
+            f"Database(name={self.name!r}, "
             f"tables={list(self._tables.keys())}"
         )
         
