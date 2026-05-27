@@ -99,7 +99,7 @@ class Database:
             table_name (String): Nombre de la tabla donde ocurrira la busqueda
             key (Any): Clave primaria ID
         """
-        self._getOnRaise(table_name).find(key)
+        return self._getOnRaise(table_name).find(key)
     
     
     def select_all(self, table_name):
