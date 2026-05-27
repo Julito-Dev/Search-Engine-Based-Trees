@@ -150,3 +150,16 @@ class Table:
             row for row in self.get_all_rows()
             if filtro(row["data"])
         ]
+    
+    def select_range(self, min_key, max_key):
+        """Retor filas cuya clave este entre min_key y max_key
+        Args:
+            min_key (Any): Clave minima
+            max_key (Any): Clave maxima
+        """
+        return[
+            {"key": key, "data": data}
+            for key, data in self._tree.range_search(min_key, max_key)
+    
+        ]
+        
