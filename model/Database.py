@@ -50,3 +50,17 @@ class Database:
         """
         return list(self._tables.keys())
     
+    
+    # HELPER PARA EL CRUD DE LA BASE DE DATOS
+    def _getOnRaise(self, table_name):
+            """Valida que la tabla existe y la retorna
+            """
+            if table_name not in self._tables:
+                raise KeyError(f'La tabla {table_name} no existe')
+            
+            return self._tables[table_name]
+        
+        
+    
+    
+    
