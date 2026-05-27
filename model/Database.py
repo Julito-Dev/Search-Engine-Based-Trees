@@ -56,7 +56,8 @@ class Database:
         """
         if name not in self._tables:
             raise KeyError(f'La tabla {name} no existe.')
-
+        
+        self._tables[name]._deleteFile()  #Borra el JSON
         del self._tables[name]
     
     def get_table(self, name):
