@@ -129,3 +129,40 @@ class BST(ABC):
                 node.right,
                 result
             )
+            
+    def range_search(self, min_key, max_key):
+        """Retorna todos los nodos cuya clave esta entre
+           min_key < x < max_key
+
+        Args:
+            min_key (Any): Clave minima del rango
+            max_key (Any): Clave maxima del rango
+        """
+
+        result = []
+        self.range_recursive(self.root, min_key, max_key, result)
+        return result
+
+    def _range_recursive(self, node, min_key, max_key, result):
+        """Recorre el arbol recolectando los nodos dentro del rango.
+
+        Args:
+            node (Node): Nodo actual
+            min_key (Any): Clave Minima
+            max_key (Any): Clave Maxima
+            result (list): Acumulador de resultados
+        """
+        if node is None or node.key is None:
+            return
+        
+        
+        if min_key < node.key:
+            self._range_recursive(node.left, min_key, max_key, result)
+        
+        
+        if min_key <= node.key <= max_key:
+            result.append((node.key, node.data))
+        
+        if max_key > node.key:
+            self._range_recursive(node.right, min_key, max_key, result)
+            
