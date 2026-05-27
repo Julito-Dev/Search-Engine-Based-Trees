@@ -61,6 +61,43 @@ class Database:
             return self._tables[table_name]
         
         
+    #CRUD
     
+    def insert(self, table_name, key, data):
+        """Inserta una fila en una tabla
+
+        Args:
+            table_name (String): Nombre de la tabla donde ocurrira la insercion
+            key (Any): Calve primaria ID
+            data (dict): Datos de la fila
+        """
+        self._getOnRaise(table_name).insert_row(key, data)
+        
+    def delete(self, table_name, key):
+        """Elimina una fila de una tabla
+
+        Args:
+            table_name (String): Nombre de la tabla donde ocurrira la eliminacion
+            key (Any): Clave primaria ID
+        """
+        self._getOnRaise(table_name).delete_row(key)
+        
+    def update(self, table_name, key, data):
+        """Actualiza los datos de una fila en una tabla
+
+        Args:
+            table_name (String): Nombre de la tabla donde ocurrira la actualizacion
+            key (Any): Clave primaria ID
+            data (dict): Datos actualizados
+        """
+        self._getOnRaise(table_name).update_row(key, data)
     
-    
+    def find(self, table_name, key):
+        """Busca una fila de una tabla por su clave ID
+
+        Args:
+            table_name (String): Nombre de la tabla donde ocurrira la busqueda
+            key (Any): Clave primaria ID
+        """
+        self._getOnRaise(table_name).find(key)
+        
