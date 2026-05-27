@@ -40,7 +40,7 @@ class Table:
                 for key, data in self._tree.inorder()
             ]
         }
-        with open(self._filepath(),"w", enconding = "utf-8") as f:
+        with open(self._filepath(),"w", encoding = "utf-8") as f:
             json.dump(payload, f, indent=2, ensure_ascii=False)
         
     
