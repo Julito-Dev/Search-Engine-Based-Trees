@@ -87,4 +87,16 @@ class Table:
             f"node_count={s['node_count']})"
         )
         
-    
+    def select_where(self, filtro):
+        """Retorna las filas que cumplan el filtro.
+
+        Args:
+            filtro (callable): Lambda que recibe data y retorna bool.
+                            ej: lambda data: data["edad"] > 25
+        Returns:
+            list[dict]: Filas que cumplen el filtro.
+        """
+        return [
+            row for row in self.get_all_rows()
+            if filtro(row["data"])
+        ]
