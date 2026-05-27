@@ -119,3 +119,23 @@ class Database:
             filtro (callable): Lambda sobre data. d["Presupuesto"]> 100000
         """
         return self._getOnRaise(table_name).select_where(filtro)
+    
+    
+    def summary(self):
+        """retorna un resumen de todas las tablas.
+        """
+        return {
+            "database": self.name,
+            "tables": len(self._tables),
+            "table_info": {
+                name: table.summary
+                for name, table in self._tables
+            }
+        }
+        
+    def __repr__(self):
+        return(
+            f"Database(name={self.name}!r), "
+            f"tables={list(self._tables.keys())}"
+        )
+        
