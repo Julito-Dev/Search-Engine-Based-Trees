@@ -100,4 +100,22 @@ class Database:
             key (Any): Clave primaria ID
         """
         self._getOnRaise(table_name).find(key)
-        
+    
+    
+    def select_all(self, table_name):
+        """Retorna todas las filas de una tabla
+
+        Args:
+            table_name (String): Nombre de la tabla donde ocurrira la seleccion
+        """
+
+        return self._getOnRaise(table_name).get_all_rows()
+    
+    def select_where(self, table_name, filtro):
+        """Retorna las filas de una tabla que cumplen cierto filtro
+
+        Args:
+            table_name (String): El nombre de la tabla donde ocurrira la seleccion
+            filtro (callable): Lambda sobre data. d["Presupuesto"]> 100000
+        """
+        return self._getOnRaise(table_name).select_where(filtro)
