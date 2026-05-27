@@ -163,3 +163,15 @@ class Database:
             f"tables={list(self._tables.keys())}"
         )
         
+    
+    def select_range(self, table_name, min_key, max_key):
+        """Retorna las filas de una tabla dentro de un rango de claves
+
+        Args:
+            table_name (String): Nombre de la tabla
+            min_key (Any): Clave minima
+            max_key(Any): Clave Maxima
+        """
+        
+        return self._getOnRaise(table_name).select_range(min_key, max_key)
+        
