@@ -56,4 +56,35 @@ class Table:
             return None
         return {"key": nodo.key, "data": nodo.data}
 
+    def get_all_rows(self):
+        """Retorna todas las filas ordenadas de mayor a menor ID
+        """
+        return [
+            {"key": key, "data": data}
+            for key, data in self._tree.inorder()
+        ]
+    
+    def summary(self):
+        """Returns a dictionary with the tree's global metrics.
+ 
+        Returns:
+            dict: {'tree_type', 'node_count', 'height', 'min_key', 'max_key'}
+        """
+        all_rows = self.get_all_rows()
+        return {
+            "name": self.name,
+            "tree_type":  self.treeType,
+            "node_count": len(all_rows),
+            "min_key":    all_rows[0]["key"] if all_rows else None ,
+            "max_key":   all_rows[-1]["key"] if all_rows else None,
+        }
+    
+    def __repr__(self):
+        s = self.summary()
+        return (
+            f"Table(name = {s['name']!r}), "
+            f"Tree_type={s['tree_type']!r}, "
+            f"node_count={s['node_count']})"
+        )
         
+    
