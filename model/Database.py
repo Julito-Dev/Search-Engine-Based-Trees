@@ -35,5 +35,18 @@ class Database:
             raise KeyError(f'La tabla {name} no existe.')
 
         del self._tables[name]
+    
+    def get_table(self, name):
+        """Retorna un objeto de la clase tabla
+        """
         
+        if name not in self._tables:
+            raise KeyError(f'La tabla {name} no existe')
+        
+        return self._tables[name]
+    
+    def list_tables(self):
+        """Retorna todas los nombres de todas las tablas en la base de datos
+        """
+        return list(self._tables.keys())
     
