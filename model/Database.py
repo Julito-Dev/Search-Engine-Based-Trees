@@ -1,6 +1,6 @@
 from Table import Table
-
-
+import os
+import json
 class Database:
     def __init__(self, name):
         """Crea una base de datos que administra multiples tablas
@@ -10,7 +10,30 @@ class Database:
         """
         self.name = name
         self._tables = {}  #Aqui se almacenaran las tablas
+        self._load_all()
     
+    
+    def _load_all(self):
+        """Lee /data y reconstruye todas las tablas al iniciar
+        """
+        
+        data_dir = Table.DATA_DIR
+        if not os.path.exists(data_dir):
+            return
+        
+        for filename in os.listdir(data_dir):
+            if filename.endswith(".json"):
+                path = os.path.join(data_dir, filename)
+                with open(path, "r", encoding="utf-8") as f:
+                    payload = json.load(f)
+                
+                name = payload["table_name"]
+                tree_type = payload["tree_type"]
+                self._tables[name] = Table(
+                    name=name,
+                    treeType=tree_type,
+                    load=True   #La tabla cargara desde JSON
+                )
     
     def createTable(self, name, treeType="AVL"):
         """Crea una nueva tabla y se registra en la base de datos
