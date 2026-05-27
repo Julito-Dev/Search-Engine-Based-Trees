@@ -140,7 +140,7 @@ class BST(ABC):
         """
 
         result = []
-        self.range_recursive(self.root, min_key, max_key, result)
+        self._range_recursive(self.root, min_key, max_key, result)
         return result
 
     def _range_recursive(self, node, min_key, max_key, result):
