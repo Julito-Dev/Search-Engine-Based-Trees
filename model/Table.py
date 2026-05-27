@@ -19,7 +19,8 @@ class Table:
         self._tree = AVLTree() if treeType == "AVL" else RBTree()
 
         os.makedirs(self.DATA_DIR, exist_ok=True)   #Crea /data si no existia
-    
+        if load:
+            self._load()
     
     # PERSISTENCIA
     
@@ -39,6 +40,9 @@ class Table:
                 for key, data in self._tree.inorder()
             ]
         }
+        with open(self._filepath(),"w", enconding = "utf-8") as f:
+            json.dump(payload, f, indent=2, ensure_ascii=False)
+        
     
     def _load(self):
         """Reconstruye ek arbol desde el archivo JSON
