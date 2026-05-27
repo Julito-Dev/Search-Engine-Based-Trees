@@ -40,6 +40,26 @@ class Table:
             ]
         }
     
+    def _load(self):
+        """Reconstruye ek arbol desde el archivo JSON
+        """
+        path = self._filepath()
+        if not os.path.exists(path):
+            return
+        
+        with open(path, "r", encoding="utf-8") as f:
+            payload = json.load(f)
+        for row in payload["rows"]:
+            self._tree.insert(row["key"], row["data"])
+    
+    def _deleteFile(self):
+        """Elimina el JSON al hacer droptable
+        """
+        path = self._filepath()
+        if os.path.exists(path):
+            os.remove(path)
+            
+        
     def insert_row(self, key, data):
         """Inserta una fila en la tabla
 
