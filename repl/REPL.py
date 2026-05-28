@@ -88,6 +88,10 @@ class REPL:
             rows = db.select_range(op["table"], op["min_key"], op["max_key"])
             self._print_rows(rows)
         
+        elif action == "delete":
+            db.delete(op["table"], op["key"])
+            print(f"Fila {op['key']} eliminada de '{op['table']}'.")
+        
     def _build_filter(self, field, op, value):
         """Construye una funcion lambda a partir del campo, operador y valor
 
