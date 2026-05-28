@@ -24,5 +24,13 @@ class Parser:
             return {"action": "summary"}
         
         
+        #SUMMARY <tabla>
         
-        
+        m = re.match(r"SUMMARY\s+(\w+)", cmd, re.IGNORECASE)
+        if m:
+            return {"action": "summary_table", "table": m.group(1)}
+
+        # CREATE TABLE <nombre> <AVL|RB>
+        m = re.match(r"CREATE\s+TABLE\s+(\w+)\s+(AVL|RB)", cmd, re.IGNORECASE)
+        if m:
+            return {"action": "create_table", "table": m.group(1), "tree_type": m.group(2).upper()}
