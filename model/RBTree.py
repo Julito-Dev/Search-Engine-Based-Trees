@@ -97,7 +97,8 @@ class RBTree(BST):
             elif key > current.key:
                 current = current.right
             else:
-                current.data = data  #Clave duplicada, solo actualiza la data
+                current.data = data #Clave duplicada, solo actualiza la data
+                self._notify() #La clave notificada notifica
                 return
         
         #Paso 2 - Conectar el nuevo nodo
@@ -112,14 +113,18 @@ class RBTree(BST):
         #PASO 3 - Si es la raiz, colorear de negro
         if new_node.parent is None:
             new_node.color = BLACK
+            self._notify()#La raiz notifica
             return
         
         #PASO 4 - Si no existe el abuelo, no existe ninguna violacion
         if new_node.parent.parent is None:
+            self._notify()  # Notificacion 
             return
         
         #PASO 5 - Ajustar el arbol
         self.fix_insert(new_node)
+
+        self._notify() #NOTIFICA
     
     def fix_insert(self, node):
         
@@ -206,6 +211,7 @@ class RBTree(BST):
             return    #La clave no existe
         
         self._delete_node(node)
+        self._notify()  #NOTIFICA
     
     def _delete_node(self, node):
         

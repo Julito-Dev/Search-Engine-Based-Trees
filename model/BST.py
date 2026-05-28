@@ -3,7 +3,9 @@ from abc import ABC, abstractmethod
 class BST(ABC):
     def __init__(self, root):
         self.root = root
-    
+        self._on_change = None
+        
+        
     
     @abstractmethod
     def insert(self, key, data):
@@ -165,4 +167,19 @@ class BST(ABC):
         
         if max_key > node.key:
             self._range_recursive(node.right, min_key, max_key, result)
+        
+    
+    def set_on_change(self, callback):
+        """La UI Notificara aqui su funcion para refrescar
+
+        Args:
+            callback (callable): Funcion que recibe la lista inorder actualizada
+        """
+        self._on_change = callback
+    
+    def _notify(self):
+        """Llama al callback si existe
+        """
+        if self._on_change:
+            self._on_change(self.inorder())
             

@@ -113,6 +113,7 @@ class AVLTree(BST):
             data (dict): La informacion del nodo
         """
         self.root = self._insert_recursive(self.root, key, data)
+        self._notify() #NOTIFICA 
 
 
     def _insert_recursive(self, node, key, data):
@@ -163,6 +164,7 @@ class AVLTree(BST):
             key (Any): La clave unica del nodo a eliminar
         """
         self.root = self._delete_recursive(self.root, key)
+        self._notify() #NOTIFICA
         
     
     def _delete_recursive(self, node, key):
