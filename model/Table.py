@@ -55,7 +55,8 @@ class Table:
             key (Any): ID del nodo a eliminar
         """
         self._tree.delete(key)
-        self._save()
+        self._storage.save(self._tree, self.treeType)
+        
         
     def update_row(self, key, data):
         """Actualiza los datos de una fila.
@@ -66,7 +67,7 @@ class Table:
             data (dict): Nuevos datos
         """
         self._tree.insert(key, data)
-        self._save()
+        self._storage.save(self._tree, self.treeType)
     
     def find(self, key):
         """Busca una fila por su ID
