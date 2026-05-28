@@ -40,35 +40,61 @@ class Table:
         
     def insert_row(self, key, data):
         """Inserta una fila en la tabla
+            Implementamos atomicidad (Si falla, revertimos el guardado)
 
         Args:
             key (Any): Clave Primaria ID
             data (dict): datos de la fila
         """
-        self._tree.insert(key, data)
-        self._storage.save(self._tree, self.treeType)
+        try:
+            self._tree.insert(key, data)
+            self._storage.save(self._tree, self.treeType)
+        except Exception as e:
+            self._tree.delete(key) # REVERSION
+            raise RuntimeError(f"Error, Insercion fallida, operacion reveritda {e}")
         
     def delete_row(self, key):
         """Elimina una fila por su ID
-
+            Implementamos atomicidad, revierte si el guardado falla
         Args:
             key (Any): ID del nodo a eliminar
         """
-        self._tree.delete(key)
-        self._storage.save(self._tree, self.treeType)
+        backup = self._tree.search(key)
+        if backup is None:
+            return
         
+        backup_data = backup.data
+        
+        try:
+            self._tree.delete(key)
+            self._storage.save(self._tree, self.treeType)
+        except Exception as e:
+            self._tree.insert(key, backup_data) #REVERSION
+            raise RuntimeError(f"DELETE fallid, operacion revertida: {e}")
+   
         
     def update_row(self, key, data):
         """Actualiza los datos de una fila.
             Si la clave no existe, la inserta.
+            Implementamos atomicidad, si el guardado falla, revierte
 
         Args:
             key (Any): La clave primaria del nodo a actualizar
             data (dict): Nuevos datos
         """
-        self._tree.insert(key, data)
-        self._storage.save(self._tree, self.treeType)
-    
+        actual = self._tree.search(key)
+        backup_data = actual.data if actual else None
+        
+        try:
+            self._tree.insert(key, data)
+            self._storage.save(self._tree, self.treeType)
+        except Exception as e:
+            if backup_data is not None:
+                self._tree.insert(key, backup_data) #Reversion al estado anterior
+            else:
+                self._tree.insert(key)   # ERA nuevo, revierte el insert
+            raise RuntimeError(f"Update Fallido, operacion revertida {e}")
+        
     def find(self, key):
         """Busca una fila por su ID
 
