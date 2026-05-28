@@ -27,7 +27,7 @@ class TableStorage:
         if schema:
             schema_serial = {
                 field: t.__name__
-                for field in schema.items()
+                for field, t in schema.items()
             }
             
         payload = {
