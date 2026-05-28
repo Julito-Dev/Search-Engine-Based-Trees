@@ -15,7 +15,7 @@ class TableStorage:
         return os.path.join(self.data_dir, f"{self.table_name}.json")
     
     
-    def save(self, tree, treeType):
+    def save(self, tree, treeType, schema=None):
         """Serializa un arbol completo a JSON
 
         Args:
@@ -23,10 +23,17 @@ class TableStorage:
             treeType (String): "AVL" o "RB"
     
         """
-        
+        schema_serial= None
+        if schema:
+            schema_serial = {
+                field: t.__name__
+                for field in schema.items()
+            }
+            
         payload = {
             "table_name": self.table_name,
             "tree_type": treeType,
+            "schema": schema_serial,
             "rows": [
                 {"key": key, "data":data}
                 for key, data in tree.inorder()
@@ -35,7 +42,8 @@ class TableStorage:
         with open(self.filepath(), "w", encoding="utf-8") as f:
             json.dump(payload, f, indent=2, ensure_ascii=False)
         
-    
+
+            
     def load(self):
         """Lee el JSON y retorna las filas
         """
