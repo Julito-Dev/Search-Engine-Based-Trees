@@ -65,7 +65,7 @@ class REPL:
         
         elif action == "insert":
             db.insert(op["table"], op["key"], op["data"])
-            print(f"Fila '{op['key']} insertada en '{op['table']}'.")
+            print(f"Fila {op['key']} insertada en '{op['table']}'.")
         
         elif action == "update":
             db.update(op["table"], op["key"], op["data"])
