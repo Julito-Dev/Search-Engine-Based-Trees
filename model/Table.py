@@ -3,7 +3,7 @@ from model.RBTree import RBTree
 from storage.TableStorage import TableStorage
 class Table:
     DATA_DIR = "data" #Carpeta donde viven los JSON
-    def __init__(self, name, treeType = "AVL", load=False):   #AVL por defecto
+    def __init__(self, name, treeType = "AVL", schema = None, load=False):   #AVL por defecto
         """Crea una tabla que es respaldada por un arbol binario balanceado
 
         Args:
@@ -15,11 +15,45 @@ class Table:
         
         self.name = name
         self.treeType = treeType
+        self.schema = schema  # Si es None, significa que no hay validacion
         self._tree = AVLTree() if treeType == "AVL" else RBTree()
 
         self._storage = TableStorage(name, self.DATA_DIR)
         if load:
             self._load()
+    
+    #SCHEMAS
+    
+    def _validate(self, data):
+        """Si el Schema existe, entonces lo valida
+
+        Args:
+            data (dict): Datos que se van a validad
+
+        Raises:
+            ValueError: Si un campo fata, sobra o tiene un tipo de dato incorrecto
+        """
+        if self.schema is None:
+            return #Acepta cualquier dict
+
+        #Campos extra
+        extra = set(data.keys()) - set(self.schema.keys())
+        if extra:
+            raise ValueError(f"Campos no permitidos: {extra}")
+        
+        #Campos obligatorios que faltan
+        missing = set(self.schema.keys()) - set(data.keys())
+        if missing:
+            raise ValueError(f"Campos obligaotorios faltantes: {missing}")
+        
+        #Validar tipos
+        for field, expected_type in self.schema.items():
+            value = data[field]
+            if not isinstance(value,expected_type):
+                raise ValueError(
+                    f"Campo '{field}' debe ser {expected_type.__name__}, "
+                    f"se recibio {type(value).__name__}"
+                )
     
     # PERSISTENCIA
         
