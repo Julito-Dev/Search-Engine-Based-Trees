@@ -1,6 +1,8 @@
 from model.AVLTree import AVLTree
 from model.RBTree import RBTree
 from storage.TableStorage import TableStorage
+
+TYPE_MAP = {"int": int, "str":str, "float":float, "bool":bool}
 class Table:
     DATA_DIR = "data" #Carpeta donde viven los JSON
     def __init__(self, name, treeType = "AVL", schema = None, load=False):   #AVL por defecto
@@ -63,6 +65,14 @@ class Table:
         payload = self._storage.load()
         if payload is None:
             return
+        
+        if payload.get("schema"):
+            self.schema = {
+                field: TYPE_MAP[t]
+                for field, t in payload["schema"].items()
+                
+            }
+            
         for row in payload["rows"]:
             self._tree.insert(row["key"], row["data"])
     
@@ -80,9 +90,10 @@ class Table:
             key (Any): Clave Primaria ID
             data (dict): datos de la fila
         """
+        self._validate(data) #Valida antes de tocar el arbol
         try:
             self._tree.insert(key, data)
-            self._storage.save(self._tree, self.treeType)
+            self._storage.save(self._tree, self.treeType, self.schema)
         except Exception as e:
             self._tree.delete(key) # REVERSION
             raise RuntimeError(f"Error, Insercion fallida, operacion reveritda {e}")
@@ -101,7 +112,7 @@ class Table:
         
         try:
             self._tree.delete(key)
-            self._storage.save(self._tree, self.treeType)
+            self._storage.save(self._tree, self.treeType, self.schema)
         except Exception as e:
             self._tree.insert(key, backup_data) #REVERSION
             raise RuntimeError(f"DELETE fallid, operacion revertida: {e}")
@@ -116,17 +127,18 @@ class Table:
             key (Any): La clave primaria del nodo a actualizar
             data (dict): Nuevos datos
         """
+        self._validate(data) #Valida antes de tocar el arbol
         actual = self._tree.search(key)
         backup_data = actual.data if actual else None
         
         try:
             self._tree.insert(key, data)
-            self._storage.save(self._tree, self.treeType)
+            self._storage.save(self._tree, self.treeType, self.schema)
         except Exception as e:
             if backup_data is not None:
                 self._tree.insert(key, backup_data) #Reversion al estado anterior
             else:
-                self._tree.insert(key)   # ERA nuevo, revierte el insert
+                self._tree.delete(key)   # ERA nuevo, revierte el insert
             raise RuntimeError(f"Update Fallido, operacion revertida {e}")
         
     def find(self, key):
@@ -159,6 +171,7 @@ class Table:
         return {
             "name": self.name,
             "tree_type":  self.treeType,
+            "schema": {f: t.__name__ for f, t in self.schema.items()} if self.schema else None,
             "node_count": len(all_rows),
             "min_key":    all_rows[0]["key"] if all_rows else None ,
             "max_key":   all_rows[-1]["key"] if all_rows else None,
