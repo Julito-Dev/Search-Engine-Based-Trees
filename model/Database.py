@@ -35,7 +35,7 @@ class Database:
                     load=True   #La tabla cargara desde JSON
                 )
     
-    def createTable(self, name, treeType="AVL"):
+    def createTable(self, name, treeType="AVL", schema= None):
         """Crea una nueva tabla y se registra en la base de datos
 
         Args:
@@ -46,7 +46,7 @@ class Database:
         if name in self._tables:
             raise ValueError(f'La tabla {name} ya existe.')
         
-        self._tables[name] = Table(name=name, treeType= treeType)
+        self._tables[name] = Table(name=name, treeType= treeType, schema=schema)
         
     def dropTable(self, name):
         """Elimina una tabla de la base de datos.
