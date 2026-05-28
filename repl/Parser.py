@@ -40,7 +40,12 @@ class Parser:
             return {"action": "create_table", "table": m.group(1),
                     "tree_type": m.group(2).upper()}
 
-
+        # DROP TABLE <nombre>
+        m = re.match(r"DROP\s+TABLE\s+(\w+)$", cmd, re.IGNORECASE)
+        if m:
+            return {"action": "drop_table", "table": m.group(1)
+            }
+        
         # INSERT INTO <tabla> <key> <json>
         m = re.match(r"INSERT\s+INTO\s+(\w+)\s+(\d+)\s+(\{.*\})$", cmd, re.IGNORECASE)
         if m:
