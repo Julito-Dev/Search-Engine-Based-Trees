@@ -54,3 +54,53 @@ class Parser:
         
         if m:
             return {"action": "delete", "table": m.group(1), "key": int(m.group(2))}
+        
+        #UPDATE <tabla> <key> <json>
+        m = re.match(r"UPDATE\s+(\w+)\s+(\d+)\s+(\{.*\}))", cmd, re.IGNORECASE)
+        if m:
+            try:
+                data = json.loads(m.group(3))
+            
+            except json.JSONDecodeError:
+                raise ValueError("El JSON no es valido.")
+            
+            return {"action": "update", "table": m.group(1), "key": int(m.group(2)), "data": data}
+
+        
+        #FIND <tabla> <key>
+        m = re.match(r"FIND\s+(\w+)\s+(\d+)", cmd, re.IGNORECASE)
+        if m:
+            return {"action": "find", "table": m.group(1), "key": int(m.group(2))}
+
+        # SELECT * FROM <tabla> WHERE key BETWEEN <min> AND <max>
+        
+        m =re.match(r"SELECT\s+\*\s+FROM\s+(\w+)\s+WHERE\s+(\w+)\s*(>=|<=|>|<|=)\s*(.+)", cmd, re.IGNORECASE)
+        if m:
+            table = m.group(1)
+            field = m.group(2)
+            op = m.group(3)
+            raw = m.group(4)
+            value = self._cast(raw)
+            return {"action": "select_where", "table": table,
+                    "field": field, "op":op, "value": value}
+            
+        # SELECT * FROM <tabla>
+        m = re.match(r"SELECT\s+\*\s+FROM\s+(\w+)", cmd, re.IGNORECASE)
+        if m:
+            return {"action": "select_all", "table": m.group(1)}
+        
+        raise ValueError(f"Comando no reconocido: '{cmd}'")
+
+    
+    def _cast(self, value):
+        """Intenta convertir una string a int, float o bool
+
+        """
+        if value.lower() == "true": return True
+        if value.lower() == "false": return False
+        try: return int(value)
+        except ValueError: pass
+        try: return float(value)
+        except ValueError: pass
+        return value.strip('"').strip("'")
+    
