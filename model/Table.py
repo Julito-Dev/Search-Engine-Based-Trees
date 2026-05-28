@@ -46,7 +46,7 @@ class Table:
             data (dict): datos de la fila
         """
         self._tree.insert(key, data)
-        self._save()
+        self._storage.save(self._tree, self.treeType)
         
     def delete_row(self, key):
         """Elimina una fila por su ID
