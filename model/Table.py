@@ -35,9 +35,7 @@ class Table:
     def _deleteFile(self):
         """Elimina el JSON al hacer droptable
         """
-        path = self._filepath()
-        if os.path.exists(path):
-            os.remove(path)
+        self._storage.delete()
             
         
     def insert_row(self, key, data):
