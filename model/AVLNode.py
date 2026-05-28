@@ -1,4 +1,4 @@
-from Node import Node
+from model.Node import Node
 
 class AVLNode(Node):
     def __init__(self, key, data):

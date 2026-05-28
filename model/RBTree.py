@@ -1,5 +1,5 @@
-from BST import BST
-from RBNode import RBNode, RED, BLACK
+from model.BST import BST
+from model.RBNode import RBNode, RED, BLACK
 
 class RBTree(BST):
     def __init__(self):

@@ -1,4 +1,4 @@
-from Node import Node
+from model.Node import Node
 RED = "RED"
 BLACK = "BLACK"
 

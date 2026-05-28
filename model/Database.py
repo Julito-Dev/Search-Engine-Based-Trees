@@ -1,4 +1,4 @@
-from Table import Table
+from model.Table import Table
 import os
 import json
 class Database:

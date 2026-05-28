@@ -1,5 +1,5 @@
-from AVLTree import AVLTree
-from RBTree import RBTree
+from model.AVLTree import AVLTree
+from model.RBTree import RBTree
 from storage.TableStorage import TableStorage
 class Table:
     DATA_DIR = "data" #Carpeta donde viven los JSON

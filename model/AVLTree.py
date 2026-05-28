@@ -1,5 +1,5 @@
-from BST import BST
-from AVLNode import AVLNode
+from model.BST import BST
+from model.AVLNode import AVLNode
 
 class AVLTree(BST):
     def __init__(self):
