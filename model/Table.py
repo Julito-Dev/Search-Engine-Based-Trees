@@ -1,7 +1,6 @@
 from AVLTree import AVLTree
 from RBTree import RBTree
-import json
-import os
+from storage.TableStorage import TableStorage
 class Table:
     DATA_DIR = "data" #Carpeta donde viven los JSON
     def __init__(self, name, treeType = "AVL", load=False):   #AVL por defecto
@@ -18,41 +17,18 @@ class Table:
         self.treeType = treeType
         self._tree = AVLTree() if treeType == "AVL" else RBTree()
 
-        os.makedirs(self.DATA_DIR, exist_ok=True)   #Crea /data si no existia
+        self._storage = TableStorage(name, self.DATA_DIR)
         if load:
             self._load()
     
     # PERSISTENCIA
-    
-    def _filepath(self):
-        """Ruta del archivo JSON de esta tabla
-        """
-        return os.path.join(self.DATA_DIR, f"{self.name}.json")
-    
-    def _save(self):
-        """Serializa la tabla completa a JSON
-        """
-        payload = {
-            "table_name": self.name,
-            "tree_type": self.treeType,
-            "rows": [
-                {"key": key, "data": data}
-                for key, data in self._tree.inorder()
-            ]
-        }
-        with open(self._filepath(),"w", encoding = "utf-8") as f:
-            json.dump(payload, f, indent=2, ensure_ascii=False)
         
-    
     def _load(self):
-        """Reconstruye ek arbol desde el archivo JSON
+        """Reconstruye el arbol desde el archivo JSON
         """
-        path = self._filepath()
-        if not os.path.exists(path):
+        payload = self._storage.load()
+        if payload is None:
             return
-        
-        with open(path, "r", encoding="utf-8") as f:
-            payload = json.load(f)
         for row in payload["rows"]:
             self._tree.insert(row["key"], row["data"])
     
