@@ -25,6 +25,7 @@ class REPL:
             
             except (EOFError, KeyboardInterrupt):
                 print("\nSaliendo...")
+                break
         
             if not cmd:
                 continue
@@ -94,7 +95,7 @@ class REPL:
             db.delete(op["table"], op["key"])
             print(f"Fila {op['key']} eliminada de '{op['table']}'.")
         
-        elif action == "load.csv":
+        elif action == "load_csv":
             result = self.loader.loadCSV(op["filepath"], op["table"])
             print(f"Insertadas: {result['inserted']} filas.")
             if result["skipped"] > 0:
