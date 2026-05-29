@@ -12,7 +12,7 @@ class REPL:
     def __init__(self, db_name ="mi_base"):
         self.db = Database(db_name)
         self.parser = Parser()
-        self.loader = Dataloader()
+        self.loader = Dataloader(self.db)
     
     
     def run(self):
