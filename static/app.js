@@ -5,6 +5,13 @@ const treeInfo = document.getElementById("tree-info");
 const treeSvg = document.getElementById("tree-svg");
 let activeTable = null;
 
+
+const castKey = (raw) => {
+  const trimmed = raw.trim();
+  return isNaN(trimmed) || trimmed === "" ? trimmed : Number(trimmed);
+};
+
+
 const showStatus = (text, error = false) => {
   statusBox.textContent = text;
   statusBox.style.background = error ? "#fee2e2" : "#eef2ff";
@@ -206,7 +213,7 @@ const setupForms = () => {
     e.preventDefault();
     if (!activeTable) { showStatus("Selecciona una tabla antes de insertar.", true); return; }
 
-    const key = Number(document.getElementById("insert-key").value);
+    const key = castKey(document.getElementById("insert-key").value);
     let data;
     try { data = JSON.parse(document.getElementById("insert-data").value.trim()); }
     catch { showStatus("JSON inválido en los datos.", true); return; }
@@ -226,7 +233,7 @@ const setupForms = () => {
     e.preventDefault();
     if (!activeTable) { showStatus("Selecciona una tabla antes de actualizar.", true); return; }
 
-    const key = Number(document.getElementById("update-key").value);
+    const key = castKey(document.getElementById("update-key").value);
     let data;
     try { data = JSON.parse(document.getElementById("update-data").value.trim()); }
     catch { showStatus("JSON inválido en los datos.", true); return; }
@@ -246,7 +253,7 @@ const setupForms = () => {
     e.preventDefault();
     if (!activeTable) { showStatus("Selecciona una tabla antes de eliminar.", true); return; }
 
-    const key     = Number(document.getElementById("delete-key").value);
+    const key     = castKey(document.getElementById("delete-key").value);
     const payload = await postAction("/api/delete", { table: activeTable, key }, "Fila eliminada.");
     if (payload) {
       renderTableInfo(payload.table);
@@ -261,7 +268,7 @@ const setupForms = () => {
     e.preventDefault();
     if (!activeTable) { showStatus("Selecciona una tabla antes de buscar.", true); return; }
 
-    const key      = Number(document.getElementById("find-key").value);
+    const key      = castKey(document.getElementById("find-key").value);
     const response = await postAction("/api/find", { table: activeTable, key }, "Búsqueda realizada.");
     if (response && response.result) {
       showStatus(`Encontrado: ${JSON.stringify(response.result)}`);
@@ -292,8 +299,8 @@ const setupForms = () => {
     e.preventDefault();
     if (!activeTable) { showStatus("Selecciona una tabla.", true); return; }
 
-    const min_key = parseInt(document.getElementById("range-min").value);
-    const max_key = parseInt(document.getElementById("range-max").value);
+    const min_key = castKey(document.getElementById("range-min").value);
+    const max_key = castKey(document.getElementById("range-max").value);
 
     const payload = await postAction("/api/select_range",
       { table: activeTable, min_key, max_key },
