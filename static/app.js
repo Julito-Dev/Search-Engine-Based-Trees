@@ -77,19 +77,31 @@ const renderRows = (rows) => {
 
   const table = document.createElement("table");
   const header = document.createElement("thead");
-  header.innerHTML = `<tr><th>Clave</th><th>Datos</th></tr>`;
-  table.appendChild(header);
-
   const body = document.createElement("tbody");
+
+  // Encabezados (Key + cada campo del data)
+  const fields = Object.keys(rows[0].data);
+  header.innerHTML = `
+    <tr>
+      <th>key</th>
+      ${fields.map(f => `<th>${f}</th>`).join("")}
+    </tr>
+    `;
+  
+  //filas
   rows.forEach((row) => {
     const tr = document.createElement("tr");
-    tr.innerHTML = `<td>${row.key}</td><td><pre>${JSON.stringify(row.data, null, 2)}</pre></td>`;
+    tr.innerHTML = `
+      <td>${row.key}</td>
+      ${fields.map(f => `<td>${row.data[f] ?? "-"}</td>`).join("")}
+    `;
     body.appendChild(tr);
   });
-  table.appendChild(body);
 
+  table.appendChild(header)
+  table.appendChild(body)
   rowsTable.innerHTML = "";
-  rowsTable.appendChild(table);
+  rowsTable.appendChild(table)
 };
 
 const clearTree = () => {
