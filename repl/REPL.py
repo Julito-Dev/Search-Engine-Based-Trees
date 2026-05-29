@@ -110,10 +110,10 @@ class REPL:
         """
         ops = {
             "=": lambda d: d.get(field) == value,
-            ">": lambda d: d.get(field) > value,
-            "<": lambda d: d.get(field) < value,
-            ">=": lambda d: d.get(field) >= value,
-            "<=": lambda d: d.get(field) <= value,
+            ">": lambda d: d.get(field) is not None and d.get(field) > value,
+            "<": lambda d: d.get(field) is not None and d.get(field)< value,
+            ">=": lambda d: d.get(field) is not None and d.get(field)>= value,
+            "<=": lambda d: d.get(field) is not None and d.get(field) <= value,
         }
         return ops[op]
     
