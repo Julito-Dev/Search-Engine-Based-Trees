@@ -3,15 +3,16 @@ import sys
 import json
 
 from flask import Flask, render_template, request, jsonify
-
 # Asegura que el paquete model sea importable cuando se ejecuta desde la raíz del repositorio.
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(ROOT_DIR, "model"))
 
 from model.Database import Database
+from model.Dataloader import Dataloader
 
 app = Flask(__name__, static_folder="static", template_folder="templates")
 db = Database("mi_base")
+loader = Dataloader(db)
 
 
 def _is_tree_node(node):
@@ -174,6 +175,97 @@ def table_info(table_name):
         return jsonify(_table_info(table))
     except Exception as exc:
         return jsonify({"error": str(exc)}), 404
+
+@app.route("/api/drop_table", methods=["POST"])
+def drop_table():
+    payload = request.get_json(force=True)
+    name = payload.get("name")
+    if not name:
+        return jsonify({"error": "name es requerido."}), 400
+    try:
+        db.dropTable(name)
+        return jsonify({"message": f"tabla '{name}' eliminada.",
+                        "tables": db.list_tables()})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+@app.route("/api/select_all", methods=["POST"])
+def select_all():
+    payload    = request.get_json(force=True)
+    table_name = payload.get("table")
+    if not table_name:
+        return jsonify({"error": "table es requerido."}), 400
+    try:
+        rows = db.select_all(table_name)
+        return jsonify({"rows": rows})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+    
+@app.route("/api/select_where", methods=["POST"])
+def select_where():
+    payload    = request.get_json(force=True)
+    table_name = payload.get("table")
+    field      = payload.get("field")
+    op         = payload.get("op")
+    value      = payload.get("value")
+
+    if not all([table_name, field, op, value is not None]):
+        return jsonify({"error": "table, field, op y value son requeridos."}), 400
+
+    ops = {
+        "=":  lambda d: d.get(field) == value,
+        ">":  lambda d: d.get(field) >  value,
+        "<":  lambda d: d.get(field) <  value,
+        ">=": lambda d: d.get(field) >= value,
+        "<=": lambda d: d.get(field) <= value,
+    }
+
+    if op not in ops:
+        return jsonify({"error": f"Operador '{op}' no válido."}), 400
+
+    try:
+        rows = db.select_where(table_name, ops[op])
+        return jsonify({"rows": rows})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+    
+@app.route("/api/select_range", methods=["POST"])
+def select_range():
+    payload    = request.get_json(force=True)
+    table_name = payload.get("table")
+    min_key    = payload.get("min_key")
+    max_key    = payload.get("max_key")
+
+    if not all([table_name, min_key is not None, max_key is not None]):
+        return jsonify({"error": "table, min_key y max_key son requeridos."}), 400
+
+    try:
+        rows = db.select_range(table_name, min_key, max_key)
+        return jsonify({"rows": rows})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+    
+@app.route("/api/load_csv", methods=["POST"])
+def load_csv():
+    payload    = request.get_json(force=True)
+    table_name = payload.get("table")
+    filepath   = payload.get("filepath")
+
+    if not table_name or not filepath:
+        return jsonify({"error": "table y filepath son requeridos."}), 400
+
+    try:
+        result = loader.loadCSV(filepath, table_name)
+        table  = db.get_table(table_name)
+        return jsonify({
+            "message":  f"Insertadas {result['inserted']} filas.",
+            "inserted": result["inserted"],
+            "skipped":  result["skipped"],
+            "errors":   result["errors"],
+            "table":    _table_info(table)
+        })
+    except (FileNotFoundError, KeyError, ValueError) as e:
+        return jsonify({"error": str(e)}), 400
 
 
 if __name__ == "__main__":
