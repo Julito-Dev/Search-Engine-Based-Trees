@@ -46,7 +46,7 @@
           <form id="insert-form">
             <h3>Insertar fila</h3>
             <label>Clave</label>
-            <input type="number" id="insert-key" required>
+            <input type="text" id="insert-key" required>
             <label>Datos (JSON)</label>
             <textarea id="insert-data" rows="4" required>{
   "nombre": "Luis",
@@ -58,7 +58,7 @@
           <form id="update-form">
             <h3>Actualizar fila</h3>
             <label>Clave</label>
-            <input type="number" id="update-key" required>
+            <input type="text" id="update-key" required>
             <label>Datos (JSON)</label>
             <textarea id="update-data" rows="4" required>{
   "nombre": "Ana",
@@ -70,14 +70,14 @@
           <form id="delete-form">
             <h3>Eliminar fila</h3>
             <label>Clave</label>
-            <input type="number" id="delete-key" required>
+            <input type="text" id="delete-key" required>
             <button type="submit">Eliminar</button>
           </form>
 
           <form id="find-form">
             <h3>Buscar fila</h3>
             <label>Clave</label>
-            <input type="number" id="find-key" required>
+            <input type="text" id="find-key" required>
             <button type="submit">Buscar</button>
           </form>
 
@@ -109,9 +109,9 @@
           <form id="select-range-form">
             <h3>Rango de claves</h3>
             <label>Clave mínima</label>
-            <input type="number" id="range-min" required>
+            <input type="text" id="range-min" required>
             <label>Clave máxima</label>
-            <input type="number" id="range-max" required>
+            <input type="text" id="range-max" required>
             <button type="submit">Buscar rango</button>
           </form>
 
