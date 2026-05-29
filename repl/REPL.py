@@ -1,6 +1,7 @@
 import json
 import os
 import sys
+from model.Dataloader import Dataloader
 
 sys.path.append(os.path.join(os.path.dirname(__file__),'..', 'model'))
 
@@ -11,6 +12,7 @@ class REPL:
     def __init__(self, db_name ="mi_base"):
         self.db = Database(db_name)
         self.parser = Parser()
+        self.loader = Dataloader()
     
     
     def run(self):
@@ -91,6 +93,15 @@ class REPL:
         elif action == "delete":
             db.delete(op["table"], op["key"])
             print(f"Fila {op['key']} eliminada de '{op['table']}'.")
+        
+        elif action == "load.csv":
+            result = self.loader.loadCSV(op["filepath"], op["table"])
+            print(f"Insertadas: {result['inserted']} filas.")
+            if result["skipped"] > 0:
+                print(f"Omitidas:  {result['skipped']} filas.")
+            if result["errors"]:
+                for e in result["errors"]:
+                    print(f"  {e}")
         
     def _build_filter(self, field, op, value):
         """Construye una funcion lambda a partir del campo, operador y valor
