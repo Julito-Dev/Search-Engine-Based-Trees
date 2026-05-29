@@ -99,9 +99,13 @@ class Parser:
         m = re.match(r"SELECT\s+\*\s+FROM\s+(\w+)$", cmd, re.IGNORECASE)
         if m:
             return {"action": "select_all", "table": m.group(1)}
+        
+        # LOAD <archivo> INTO <tabla>
+        m = re.match(r"LOAD\s+(\S+)\s+INTO\s+(\w+)$", cmd, re.IGNORECASE)
+        if m:
+            return {"action": "load_csv", "filepath": m.group(1), "table": m.group(2)}
 
         raise ValueError(f"Comando no reconocido: '{cmd}'")
-
     def _cast(self, value):
         """Convierte un string a int, float, bool o str."""
         if value.lower() == "true":  return True
