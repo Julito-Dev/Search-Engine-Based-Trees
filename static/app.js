@@ -266,7 +266,7 @@ const setupForms = () => {
     const field = document.getElementById("where-field").value.trim();
     const op    = document.getElementById("where-op").value;
     const raw   = document.getElementById("where-value").value.trim();
-    const value = isNaN(raw) ? raw : Number(raw);
+    const value = (raw === "" || isNaN(raw)) ? raw : Number(raw);
 
     const payload = await postAction("/api/select_where",
       { table: activeTable, field, op, value },
