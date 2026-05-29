@@ -8,21 +8,22 @@
   </head>
   <body>
     <main>
+
+      <!-- ── Crear / Seleccionar tabla ── -->
       <section class="panel">
         <h1>Base de Datos con Árboles Balanceados</h1>
         <div class="split-grid">
+
           <div>
             <h2>Crear tabla</h2>
             <form id="create-table-form">
               <label>Nombre de tabla</label>
               <input type="text" id="new-table-name" required>
-
               <label>Tipo de árbol</label>
               <select id="new-table-type">
                 <option value="AVL">AVL</option>
                 <option value="RB">RB</option>
               </select>
-
               <button type="submit">Crear tabla</button>
             </form>
           </div>
@@ -31,13 +32,17 @@
             <h2>Seleccionar tabla</h2>
             <label>Tabla activa</label>
             <select id="table-select"></select>
+            <button id="drop-table-btn" style="margin-top:8px;">Eliminar tabla</button>
           </div>
+
         </div>
       </section>
 
+      <!-- ── Operaciones CRUD ── -->
       <section class="panel">
         <h2>Operaciones</h2>
         <div class="split-grid">
+
           <form id="insert-form">
             <h3>Insertar fila</h3>
             <label>Clave</label>
@@ -48,6 +53,18 @@
   "edad": 30
 }</textarea>
             <button type="submit">Insertar</button>
+          </form>
+
+          <form id="update-form">
+            <h3>Actualizar fila</h3>
+            <label>Clave</label>
+            <input type="number" id="update-key" required>
+            <label>Datos (JSON)</label>
+            <textarea id="update-data" rows="4" required>{
+  "nombre": "Ana",
+  "edad": 26
+}</textarea>
+            <button type="submit">Actualizar</button>
           </form>
 
           <form id="delete-form">
@@ -63,13 +80,57 @@
             <input type="number" id="find-key" required>
             <button type="submit">Buscar</button>
           </form>
+
         </div>
       </section>
 
+      <!-- ── Consultas ── -->
+      <section class="panel">
+        <h2>Consultas</h2>
+        <div class="split-grid">
+
+          <form id="select-where-form">
+            <h3>Filtrar filas</h3>
+            <label>Campo</label>
+            <input type="text" id="where-field" placeholder="edad">
+            <label>Operador</label>
+            <select id="where-op">
+              <option value="=">=</option>
+              <option value=">">&gt;</option>
+              <option value="<">&lt;</option>
+              <option value=">=">&gt;=</option>
+              <option value="<=">&lt;=</option>
+            </select>
+            <label>Valor</label>
+            <input type="text" id="where-value" placeholder="25">
+            <button type="submit">Filtrar</button>
+          </form>
+
+          <form id="select-range-form">
+            <h3>Rango de claves</h3>
+            <label>Clave mínima</label>
+            <input type="number" id="range-min" required>
+            <label>Clave máxima</label>
+            <input type="number" id="range-max" required>
+            <button type="submit">Buscar rango</button>
+          </form>
+
+          <form id="load-csv-form">
+            <h3>Cargar CSV</h3>
+            <label>Ruta del archivo</label>
+            <input type="text" id="csv-filepath" placeholder="datasets/datos.csv" required>
+            <button type="submit">Cargar CSV</button>
+          </form>
+
+        </div>
+      </section>
+
+      <!-- ── Status ── -->
       <section class="panel">
         <div class="status-box" id="status-box">Seleccione una tabla para empezar.</div>
       </section>
 
+      <!-- ── Árbol ── -->
       <section class="panel">
         <h2>Visualización del árbol</h2>
         <div class="tree-info" id="tree-info"></div>
@@ -78,12 +139,13 @@
         </div>
       </section>
 
+      <!-- ── Filas ── -->
       <section class="panel">
         <h2>Filas</h2>
         <div class="rows-table" id="rows-table"></div>
       </section>
-    </main>
 
+    </main>
     <script src="/static/app.js"></script>
   </body>
 </html>
