@@ -271,9 +271,10 @@ const setupForms = () => {
     const key      = castKey(document.getElementById("find-key").value);
     const response = await postAction("/api/find", { table: activeTable, key }, "Búsqueda realizada.");
     if (response && response.result) {
-      showStatus(`Encontrado: ${JSON.stringify(response.result)}`);
-    } else if (response && response.result === null) {
-      showStatus("No se encontró la fila.", true);
+      renderRows([response.result]);
+      showStatus(`Fila ${key} encontrada.`);
+    } else if (response && response.result == null){
+      showStatus("No se encontro la fila.", true);
     }
   });
 
