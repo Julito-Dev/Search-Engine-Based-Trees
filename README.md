@@ -287,9 +287,5 @@ mi_base> LOAD datasets/datos.csv INTO tabla AUTOID
 
 ---
 
-## Autores
-- Julian David Paez Ortega 20251020165
-- Sergio Andres Diaz Cuervo 20251020166
-- Brayan David Santos Alvarez 20251020157
 
 
