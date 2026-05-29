@@ -1,0 +1,126 @@
+body {
+  margin: 0;
+  font-family: Inter, system-ui, sans-serif;
+  background: #f4f5f7;
+  color: #202124;
+}
+
+main {
+  max-width: 1200px;
+  margin: 24px auto;
+  padding: 0 16px 32px;
+}
+
+.panel {
+  background: #ffffff;
+  border: 1px solid #dfe1e5;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0 0 16px;
+  font-weight: 600;
+}
+
+label {
+  display: block;
+  margin: 12px 0 6px;
+  font-size: 0.95rem;
+}
+
+input,
+select,
+textarea,
+button {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #c7c7cc;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 0.95rem;
+}
+
+textarea {
+  resize: vertical;
+}
+
+button {
+  margin-top: 14px;
+  background: #1f2937;
+  color: #f8fafc;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #111827;
+}
+
+.split-grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.status-box {
+  padding: 16px;
+  border-radius: 10px;
+  background: #eef2ff;
+  color: #1e3a8a;
+  border: 1px solid #c7d2fe;
+}
+
+.tree-canvas {
+  overflow-x: auto;
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #fafafa;
+}
+
+#tree-svg {
+  width: 100%;
+  min-height: 320px;
+}
+
+.node-label {
+  font-size: 0.85rem;
+  fill: #ffffff;
+  text-anchor: middle;
+}
+
+.node-circle {
+  stroke: #111827;
+  stroke-width: 1.5;
+}
+
+.edge-line {
+  stroke: #6b7280;
+  stroke-width: 1.3;
+}
+
+.rows-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.rows-table th,
+.rows-table td {
+  border: 1px solid #e5e7eb;
+  padding: 10px;
+  text-align: left;
+}
+
+.rows-table th {
+  background: #f9fafb;
+}
+
+@media (max-width: 700px) {
+  .panel {
+    padding: 16px;
+  }
+}

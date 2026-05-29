@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Interfaz de Árboles - Base de Datos</title>
+    <link rel="stylesheet" href="/static/style.css">
+  </head>
+  <body>
+    <main>
+      <section class="panel">
+        <h1>Base de Datos con Árboles Balanceados</h1>
+        <div class="split-grid">
+          <div>
+            <h2>Crear tabla</h2>
+            <form id="create-table-form">
+              <label>Nombre de tabla</label>
+              <input type="text" id="new-table-name" required>
+
+              <label>Tipo de árbol</label>
+              <select id="new-table-type">
+                <option value="AVL">AVL</option>
+                <option value="RB">RB</option>
+              </select>
+
+              <button type="submit">Crear tabla</button>
+            </form>
+          </div>
+
+          <div>
+            <h2>Seleccionar tabla</h2>
+            <label>Tabla activa</label>
+            <select id="table-select"></select>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Operaciones</h2>
+        <div class="split-grid">
+          <form id="insert-form">
+            <h3>Insertar fila</h3>
+            <label>Clave</label>
+            <input type="number" id="insert-key" required>
+            <label>Datos (JSON)</label>
+            <textarea id="insert-data" rows="4" required>{
+  "nombre": "Luis",
+  "edad": 30
+}</textarea>
+            <button type="submit">Insertar</button>
+          </form>
+
+          <form id="delete-form">
+            <h3>Eliminar fila</h3>
+            <label>Clave</label>
+            <input type="number" id="delete-key" required>
+            <button type="submit">Eliminar</button>
+          </form>
+
+          <form id="find-form">
+            <h3>Buscar fila</h3>
+            <label>Clave</label>
+            <input type="number" id="find-key" required>
+            <button type="submit">Buscar</button>
+          </form>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="status-box" id="status-box">Seleccione una tabla para empezar.</div>
+      </section>
+
+      <section class="panel">
+        <h2>Visualización del árbol</h2>
+        <div class="tree-info" id="tree-info"></div>
+        <div class="tree-canvas">
+          <svg id="tree-svg" viewBox="0 0 800 320"></svg>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Filas</h2>
+        <div class="rows-table" id="rows-table"></div>
+      </section>
+    </main>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>
