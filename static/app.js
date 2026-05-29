@@ -329,6 +329,12 @@ const setupForms = () => {
     }
   });
 
+  // Ver todas las filas
+  document.getElementById("show-all-btn").addEventListener("click", () => {
+    if (!activeTable) { showStatus("Selecciona una tabla.", true); return;}
+    loadTable(activeTable);
+  });
+
   // ── Cambio de tabla activa ───────────────────────
   tableSelect.addEventListener("change", () => {
     const selected = tableSelect.value;
