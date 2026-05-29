@@ -214,10 +214,10 @@ def select_where():
 
     ops = {
         "=":  lambda d: d.get(field) == value,
-        ">":  lambda d: d.get(field) >  value,
-        "<":  lambda d: d.get(field) <  value,
-        ">=": lambda d: d.get(field) >= value,
-        "<=": lambda d: d.get(field) <= value,
+        ">":  lambda d: d.get(field) is not None and d.get(field) >  value,
+        "<":  lambda d: d.get(field) is not None and d.get(field) <  value,
+        ">=": lambda d: d.get(field) is not None and d.get(field) >= value,
+        "<=": lambda d: d.get(field) is not None and d.get(field)<= value,
     }
 
     if op not in ops:
