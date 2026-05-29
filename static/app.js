@@ -30,15 +30,10 @@ const fetchTables = async () => {
     option.value = name;
     option.textContent = name;
     tableSelect.appendChild(option);
-    if (index === 0) {
-      activeTable = name;
-    }
+    if (index === 0) activeTable = name;
   });
 
-  if (!activeTable) {
-    activeTable = data.tables[0];
-  }
-
+  if (!activeTable) activeTable = data.tables[0];
   tableSelect.value = activeTable;
   loadTable(activeTable);
 };
@@ -115,8 +110,8 @@ const renderTree = (tree) => {
   treeSvg.setAttribute("viewBox", `0 0 ${tree.width} ${tree.height}`);
 
   tree.edges.forEach((edge) => {
-    const from = tree.nodes.find((node) => node.id === edge.from);
-    const to = tree.nodes.find((node) => node.id === edge.to);
+    const from = tree.nodes.find((n) => n.id === edge.from);
+    const to   = tree.nodes.find((n) => n.id === edge.to);
     if (!from || !to) return;
 
     const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
@@ -165,14 +160,13 @@ const postAction = async (url, body, successText) => {
 };
 
 const setupForms = () => {
-  document.getElementById("create-table-form").addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const name = document.getElementById("new-table-name").value.trim();
+
+  // ── Crear tabla ──────────────────────────────────
+  document.getElementById("create-table-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const name     = document.getElementById("new-table-name").value.trim();
     const treeType = document.getElementById("new-table-type").value;
-    if (!name) {
-      showStatus("El nombre de tabla es obligatorio.", true);
-      return;
-    }
+    if (!name) { showStatus("El nombre de tabla es obligatorio.", true); return; }
 
     const payload = await postAction("/api/create_table", { name, tree_type: treeType }, `Tabla '${name}' creada.`);
     if (payload) {
@@ -183,42 +177,64 @@ const setupForms = () => {
     }
   });
 
-  document.getElementById("insert-form").addEventListener("submit", async (event) => {
-    event.preventDefault();
-    if (!activeTable) {
-      showStatus("Selecciona una tabla antes de insertar.", true);
-      return;
+  // ── Eliminar tabla ───────────────────────────────
+  document.getElementById("drop-table-btn").addEventListener("click", async () => {
+    if (!activeTable) { showStatus("Selecciona una tabla.", true); return; }
+    if (!confirm(`¿Eliminar tabla '${activeTable}'?`)) return;
+
+    const payload = await postAction("/api/drop_table", { name: activeTable }, `Tabla '${activeTable}' eliminada.`);
+    if (payload) {
+      activeTable = null;
+      await fetchTables();
     }
+  });
+
+  // ── Insertar ─────────────────────────────────────
+  document.getElementById("insert-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!activeTable) { showStatus("Selecciona una tabla antes de insertar.", true); return; }
 
     const key = Number(document.getElementById("insert-key").value);
-    const rawData = document.getElementById("insert-data").value.trim();
     let data;
-
-    try {
-      data = JSON.parse(rawData);
-    } catch (err) {
-      showStatus("JSON inválido en los datos.", true);
-      return;
-    }
+    try { data = JSON.parse(document.getElementById("insert-data").value.trim()); }
+    catch { showStatus("JSON inválido en los datos.", true); return; }
 
     const payload = await postAction("/api/insert", { table: activeTable, key, data }, "Fila insertada.");
     if (payload) {
       renderTableInfo(payload.table);
       renderRows(payload.table.rows);
       renderTree(payload.table.tree);
-      document.getElementById("insert-key").value = "";
+      document.getElementById("insert-key").value  = "";
       document.getElementById("insert-data").value = "";
     }
   });
 
-  document.getElementById("delete-form").addEventListener("submit", async (event) => {
-    event.preventDefault();
-    if (!activeTable) {
-      showStatus("Selecciona una tabla antes de eliminar.", true);
-      return;
-    }
+  // ── Actualizar ───────────────────────────────────
+  document.getElementById("update-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!activeTable) { showStatus("Selecciona una tabla antes de actualizar.", true); return; }
 
-    const key = Number(document.getElementById("delete-key").value);
+    const key = Number(document.getElementById("update-key").value);
+    let data;
+    try { data = JSON.parse(document.getElementById("update-data").value.trim()); }
+    catch { showStatus("JSON inválido en los datos.", true); return; }
+
+    const payload = await postAction("/api/insert", { table: activeTable, key, data }, `Fila ${key} actualizada.`);
+    if (payload) {
+      renderTableInfo(payload.table);
+      renderRows(payload.table.rows);
+      renderTree(payload.table.tree);
+      document.getElementById("update-key").value  = "";
+      document.getElementById("update-data").value = "";
+    }
+  });
+
+  // ── Eliminar fila ────────────────────────────────
+  document.getElementById("delete-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!activeTable) { showStatus("Selecciona una tabla antes de eliminar.", true); return; }
+
+    const key     = Number(document.getElementById("delete-key").value);
     const payload = await postAction("/api/delete", { table: activeTable, key }, "Fila eliminada.");
     if (payload) {
       renderTableInfo(payload.table);
@@ -228,27 +244,75 @@ const setupForms = () => {
     }
   });
 
-  document.getElementById("find-form").addEventListener("submit", async (event) => {
-    event.preventDefault();
-    if (!activeTable) {
-      showStatus("Selecciona una tabla antes de buscar.", true);
-      return;
-    }
+  // ── Buscar fila ──────────────────────────────────
+  document.getElementById("find-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!activeTable) { showStatus("Selecciona una tabla antes de buscar.", true); return; }
 
-    const key = Number(document.getElementById("find-key").value);
+    const key      = Number(document.getElementById("find-key").value);
     const response = await postAction("/api/find", { table: activeTable, key }, "Búsqueda realizada.");
     if (response && response.result) {
-      showStatus(`Búsqueda: ${JSON.stringify(response.result)}`);
+      showStatus(`Encontrado: ${JSON.stringify(response.result)}`);
     } else if (response && response.result === null) {
       showStatus("No se encontró la fila.", true);
     }
   });
 
+  // ── Filtrar WHERE ────────────────────────────────
+  document.getElementById("select-where-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!activeTable) { showStatus("Selecciona una tabla.", true); return; }
+
+    const field = document.getElementById("where-field").value.trim();
+    const op    = document.getElementById("where-op").value;
+    const raw   = document.getElementById("where-value").value.trim();
+    const value = isNaN(raw) ? raw : Number(raw);
+
+    const payload = await postAction("/api/select_where",
+      { table: activeTable, field, op, value },
+      "Filtro aplicado."
+    );
+    if (payload) renderRows(payload.rows);
+  });
+
+  // ── Rango de claves ──────────────────────────────
+  document.getElementById("select-range-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!activeTable) { showStatus("Selecciona una tabla.", true); return; }
+
+    const min_key = parseInt(document.getElementById("range-min").value);
+    const max_key = parseInt(document.getElementById("range-max").value);
+
+    const payload = await postAction("/api/select_range",
+      { table: activeTable, min_key, max_key },
+      `Rango [${min_key}, ${max_key}] aplicado.`
+    );
+    if (payload) renderRows(payload.rows);
+  });
+
+  // ── Cargar CSV ───────────────────────────────────
+  document.getElementById("load-csv-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!activeTable) { showStatus("Selecciona una tabla.", true); return; }
+
+    const filepath = document.getElementById("csv-filepath").value.trim();
+    const payload  = await postAction("/api/load_csv",
+      { table: activeTable, filepath },
+      "CSV cargado."
+    );
+    if (payload) {
+      showStatus(payload.message + (payload.skipped ? ` (${payload.skipped} omitidas)` : ""));
+      renderTableInfo(payload.table);
+      renderRows(payload.table.rows);
+      renderTree(payload.table.tree);
+      document.getElementById("csv-filepath").value = "";
+    }
+  });
+
+  // ── Cambio de tabla activa ───────────────────────
   tableSelect.addEventListener("change", () => {
     const selected = tableSelect.value;
-    if (selected) {
-      loadTable(selected);
-    }
+    if (selected) loadTable(selected);
   });
 };
 
